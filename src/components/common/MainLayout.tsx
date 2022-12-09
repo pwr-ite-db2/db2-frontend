@@ -1,5 +1,5 @@
 import { Box } from '@mui/material';
-import { Header } from './Hader';
+import { Header } from './Header';
 
 export const MainLayout = (props: { children?: JSX.Element | JSX.Element[] | never }) => {
   
