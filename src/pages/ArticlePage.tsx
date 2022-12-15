@@ -1,11 +1,19 @@
-import { Typography } from "@mui/material";
+import { debounce, Typography } from "@mui/material";
 import { Box, Grid, TextField } from "@mui/material";
 import Button from "@mui/material/Button";
 import { useCallback, useEffect, useState } from "react"
 import { MainLayout } from "../components/common/MainLayout";
 import { Form, Formik } from 'formik'
+import { Inputs } from "../components/ArticlePage/Inputs";
+import { Preview } from "../components/ArticlePage/Preview";
+import { Trans } from 'react-i18next'
 
 export const ArticlePage = (props: { articleId?: number }) => {
+  const [previewTitle, setPreviewTitle] = useState('')
+  const [previewText, setPreviewText] = useState('')
+
+  const handleTextChange = debounce((text: string) => setPreviewText(text), 50)
+  const handleTitleChange = debounce((text: string) => setPreviewTitle(text), 50)
 
   return (
     <MainLayout>
@@ -30,28 +38,28 @@ export const ArticlePage = (props: { articleId?: number }) => {
             <Form>
               <Grid
                 container
-                direction={'column'}
+                direction={'row'}
                 width={'100%'}
-                gap={'12px'}
+                height={'100%'}
+                justifyContent={'space-between'}
               >
-                <Grid
-                  container item
-                  xs={12}
-                  direction={'row'}
-                >
-                  <TextField
-                    //value='lalla'
-                    name="title"
-                    label="Tytuł"
-                    error={true}
-                  />
-                </Grid>
-                <Grid
-                  container item
-                  xs={12}
-                  direction={'row'}
-                >
+                <Inputs
+                  onTextChange={handleTextChange}
+                  onTitleChange={handleTitleChange}
+                />
 
+                <Grid
+                  container item
+                  direction={'column'}
+                  gap={'12px'}
+                  xs={5}
+                  justifyContent={'space-between'}
+                  sx={{backgroundColor: 'red'}}
+                >
+                  <Preview 
+                    title={previewTitle}
+                    text={previewText}
+                  />
                 </Grid>
               </Grid>
 
@@ -59,8 +67,9 @@ export const ArticlePage = (props: { articleId?: number }) => {
                 type='submit'
                 // sx={{ height: '100px' }}
                 variant='contained'
-                color={'secondary'}
+                sx={{ color: 'white' }}
               >
+                Zapisz
               </Button>
             </Form>
           )}
