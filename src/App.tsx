@@ -1,10 +1,14 @@
 import './App.css';
 import { Box } from '@mui/material';
 import { ArticlePage } from './pages/ArticlePage';
+import { BrowserRouter } from 'react-router-dom';
+import { RoutingTable } from './pages/RoutingTable';
 
 function App() {
   return (
-    <ArticlePage></ArticlePage>
+    <BrowserRouter>
+      <RoutingTable/>
+    </BrowserRouter>
   );
 }
 
