@@ -1,5 +1,26 @@
 import { createTheme } from '@mui/material'
 
+declare module "@mui/material/styles" {
+  interface TypographyVariants {
+    category: React.CSSProperties;
+    tag: React.CSSProperties;
+  }
+
+  // allow configuration using `createTheme`
+  interface TypographyVariantsOptions {
+    category?: React.CSSProperties;
+    tag?: React.CSSProperties;
+  }
+}
+
+// Update the Typography's variant prop options
+declare module "@mui/material/Typography" {
+  interface TypographyPropsVariantOverrides {
+    category: true;
+    tag: true;
+  }
+}
+
 let MainTheme = createTheme({
   palette: {
     primary: {
@@ -7,9 +28,31 @@ let MainTheme = createTheme({
     },
   },
   typography: {
-    h1: {
-      fontSize: '28px',
+    category: {
+      fontSize: '14px',
+      fontStyle: 'italic',
+      backgroundColor: '#ffca81',
+      padding: '4px 8px 4px 8px',
+      borderRadius: '24px',
+      width: 'fit-content',
       fontWeight: '700'
+    },
+    tag: {
+      fontSize: '10px',
+      fontStyle: 'italic',
+      backgroundColor: '#dbb8ff',
+      padding: '4px 8px 4px 8px',
+      borderRadius: '24px',
+      width: 'fit-content',
+      fontWeight: '700'
+    },
+    h1: {
+      fontSize: '32x',
+      fontWeight: '700'
+    },
+    h2: {
+      fontSize: '28px',
+      fontWeight: '500'
     }
   },
 })

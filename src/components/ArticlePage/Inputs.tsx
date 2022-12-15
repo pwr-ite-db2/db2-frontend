@@ -1,9 +1,16 @@
-import { Grid, TextField } from '@mui/material'
+import { Grid, TextField, Autocomplete } from '@mui/material'
+import { textFieldSx } from './styles'
+import { CategoryDto, TagDto } from '../../types'
 
 type Props = {
   onTitleChange: (title: string) => void
   onTextChange: (text: string) => void
+  onCategoryChange: (category: CategoryDto | null) => void
+  onTagsChange: (tags: string[]) => void
 }
+
+const dummyCategories = [{ id: 1, name: 'Polityka'}, { id: 2, name: 'Kulinaria'}, { id: 3, name: 'Nauka'}]
+const dummyTags = ['Pwr', 'piwo', 'prezydent']
 
 export const Inputs = (props: Props) => {
   return (
@@ -11,7 +18,7 @@ export const Inputs = (props: Props) => {
       container item
       direction={'column'}
       height={'100%'}
-      gap={'12px'}
+      gap={'16px'}
       xs={5}
       justifyContent={'space-between'}
     >
@@ -45,22 +52,28 @@ export const Inputs = (props: Props) => {
           container item
           xs={5}
         >
-          <TextField
+          <Autocomplete<CategoryDto, false, true, false>
             size="small"
-            name="category"
-            label="Kategoria"
             fullWidth
+            renderInput={(params) => <TextField {...params} name='category' label='Kategoria'/>}
+            getOptionLabel={(option) => option.name}
+            onChange={(e, category) => props.onCategoryChange(category)}
+            options={dummyCategories} //TODO endpoint
           />
         </Grid>
         <Grid
           container item
           xs={5}
         >
-          <TextField
+          <Autocomplete<string, true, true, true>
             size="small"
-            name="tags"
-            label="Tagi"
+            multiple
+            freeSolo
             fullWidth
+            renderInput={(params) => <TextField {...params} name='tags' label='Tagi'/>}
+            onChange={(e, tags) => props.onTagsChange(tags)}
+            // onChange={(e, value) => props.onCategoryChange(value)}
+            options={dummyTags} //TODO endpoint
           />
         </Grid>
       </Grid>
@@ -70,7 +83,11 @@ export const Inputs = (props: Props) => {
         xs={10}
       >
         <TextField
+          multiline
+          fullWidth
+          sx={textFieldSx}
           name='text'
+          label='Text'
           onChange={(event) => props.onTextChange(event.target.value)}
         />
       </Grid>
