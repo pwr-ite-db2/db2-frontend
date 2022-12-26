@@ -10,7 +10,7 @@ export const Headlines = (props: { edit: boolean }) => {
     >
       <Grid
         container item
-        xs={6}
+        xs={5}
         direction={'row'}
       >
         <Typography variant='h2'>
@@ -20,7 +20,7 @@ export const Headlines = (props: { edit: boolean }) => {
 
       <Grid
         container item
-        xs={6}
+        xs={7}
         direction={'row'}
       >
         <Typography variant='h2'>Podgląd</Typography>

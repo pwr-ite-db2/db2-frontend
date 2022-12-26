@@ -9,16 +9,32 @@ import { Preview } from "../components/ArticlePage/Preview";
 import { Headlines } from "../components/ArticlePage/Headlines";
 import { CategoryDto, TagDto } from "../types";
 
+export type ChapterDto = {
+  title: string
+  text: string
+}
+
+type FormData = {
+  categoryId: number | null
+  title: string
+  text: string
+  tags: string[]
+  chapters: ChapterDto[]
+}
+
 export const ArticlePage = (props: { articleId?: number }) => {
+
   const [previewTitle, setPreviewTitle] = useState('')
   const [previewText, setPreviewText] = useState('')
   const [previewCategory, setPreviewCategory] = useState<CategoryDto | null>(null)
   const [previewTags, setPreviewTags] = useState<string[]>([])
+  const [previewChapters, setPreviewChapters] = useState<ChapterDto[]>([])
 
-  const handleTextChange = debounce((text: string) => setPreviewText(text), 50)
-  const handleTitleChange = debounce((title: string) => setPreviewTitle(title), 50)
-  const handleCategoryChange = debounce((category: CategoryDto | null) => setPreviewCategory(category), 50)
-  const handleTagsChange = debounce((tags: string[]) => setPreviewTags(tags), 50)
+  const handleTextChange = debounce((text: string) => setPreviewText(text), 100)
+  const handleTitleChange = debounce((title: string) => setPreviewTitle(title), 100)
+  const handleChaptersChange = debounce((chapters: ChapterDto[]) => setPreviewChapters(chapters), 100)
+  const handleTagsChange = debounce((tags: string[]) => setPreviewTags(tags), 100)
+  const handleCategoryChange = debounce((category: CategoryDto | null) => setPreviewCategory(category), 100)
 
   return (
     <MainLayout>
@@ -28,37 +44,42 @@ export const ArticlePage = (props: { articleId?: number }) => {
         gap={'16px'}
       >
 
-        <Formik
+        <Formik<FormData>
           initialValues={{
             title: '',
             text: '',
-            tags: []
+            tags: [],
+            chapters: [],
+            categoryId: null
           }}
-          onSubmit={() => {}}
+          onSubmit={(data) => {console.log(data)}}
         >
           {(formikProps) => (
-            <Form>
+            <Form style={{ width: '100%' }}>
               <Grid
                 container
                 direction={'row'}
                 width={'100%'}
                 height={'100%'}
                 justifyContent={'space-between'}
+                paddingRight={'14px'}
               >
                 <Headlines edit={props.articleId != null} />
         
                 <Inputs
-                  onTextChange={handleTextChange}
-                  onTitleChange={handleTitleChange}
-                  onCategoryChange={handleCategoryChange}
-                  onTagsChange={handleTagsChange}
+                  onTextChange={() => handleTextChange(formikProps.values.text)}
+                  onTitleChange={() => handleTitleChange(formikProps.values.title)}
+                  onCategoryChange={(category) => { formikProps.values.categoryId = category?.id ?? null; handleCategoryChange(category)}}
+                  onTagsChange={(tags) => { formikProps.values.tags = tags; handleTagsChange(tags)}}
+                  onChaptersChange={() => handleChaptersChange(formikProps.values.chapters)}
+                  onChapterDelete={(index) => handleChaptersChange(previewChapters.filter((_, i) => i !== index))}
+                  chapters={formikProps.values.chapters}
                 />
 
                 <Grid
                   container item
                   direction={'column'}
-                  gap={'12px'}
-                  xs={6}
+                  xs={7}
                   justifyContent={'space-between'}
                 >
                   <Preview 
@@ -66,18 +87,35 @@ export const ArticlePage = (props: { articleId?: number }) => {
                     text={previewText}
                     category={previewCategory}
                     tags={previewTags}
+                    chapters={previewChapters}
                   />
                 </Grid>
               </Grid>
 
-              <Button
-                type='submit'
-                // sx={{ height: '100px' }}
-                variant='contained'
-                sx={{ color: 'white' }}
+              <Box
+                width={'100%'}
+                display={'flex'}
+                flexDirection={'row'}
+                gap={'8px'}
               >
-                Zapisz
-              </Button>
+                <Button
+                  type='submit'
+                  // sx={{ height: '100px' }}
+                  variant='contained'
+                  sx={{ color: 'white' }}
+                >
+                  Zapisz
+                </Button>
+
+                <Button
+                  type='submit'
+                  // sx={{ height: '100px' }}
+                  variant='contained'
+                  sx={{ color: 'white' }}
+                >
+                  Przekaż do redakcji
+                </Button>
+              </Box>
             </Form>
           )}
         </Formik>

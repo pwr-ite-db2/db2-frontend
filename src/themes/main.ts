@@ -4,12 +4,14 @@ declare module "@mui/material/styles" {
   interface TypographyVariants {
     category: React.CSSProperties;
     tag: React.CSSProperties;
+    chapter: React.CSSProperties;
   }
 
   // allow configuration using `createTheme`
   interface TypographyVariantsOptions {
     category?: React.CSSProperties;
     tag?: React.CSSProperties;
+    chapter?: React.CSSProperties;
   }
 }
 
@@ -18,6 +20,7 @@ declare module "@mui/material/Typography" {
   interface TypographyPropsVariantOverrides {
     category: true;
     tag: true;
+    chapter: true;
   }
 }
 
@@ -44,6 +47,11 @@ let MainTheme = createTheme({
       padding: '4px 8px 4px 8px',
       borderRadius: '24px',
       width: 'fit-content',
+      fontWeight: '700'
+    },
+    chapter: {
+      fontSize: '14px',
+      fontStyle: 'bold',
       fontWeight: '700'
     },
     h1: {

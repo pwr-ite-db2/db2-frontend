@@ -1,16 +1,14 @@
 import { Box, Typography } from '@mui/material';
 import parse from 'react-html-parser'
 import { CategoryDto, TagDto } from '../../types';
+import { ChapterDto } from '../../pages/ArticlePage';
 
 type Props = {
   category?: CategoryDto | null
   tags?: string[]
   title?: string
   text?: string
-  chapters?: {
-    title?: string
-    text?: string
-  }[]
+  chapters?: ChapterDto[]
 }
 
 export const Preview = (props: Props) => {
@@ -21,10 +19,12 @@ export const Preview = (props: Props) => {
       flexDirection={'column'}
       padding={'8px 16px 8px 16px'}
       overflow={'scroll'}
+      width={'100%'}
       sx={{
         borderWidth: 2,
         borderColor: 'red',
-        backgroundColor: '#f0f0f0'
+        backgroundColor: '#f0f0f0',
+        overflowWrap: 'break-word'
       }}
     >
       <Typography variant='category'>{props.category?.name ?? '<<CATEGORY>>'}</Typography>
@@ -36,13 +36,34 @@ export const Preview = (props: Props) => {
       >
         {props.title ? props.title : '<<TITLE>>'}
       </Typography>
-      <Typography 
-        sx={{ fontSize: '18px' }} //TODO from article style
+      <Typography
+        width={'100%'}
+        textAlign={'center'}
+        sx={{ fontSize: '16px' }} //TODO from article style
       >
         {props.text ? parse(props.text.replace(/\n/g, '</br>')) : ' '}
       </Typography>
 
-      <Box width={'100%'} display={'flex'} flexDirection={'row'} gap={'8px'}>
+      {props.chapters?.map((chapter, index) => (
+        <>
+          <Typography
+            marginTop={'24px'}
+            fontSize={'18px'}      //TODO from article style
+            sx={{ fontWeight: 700 }}
+            width={'100%'}
+            textAlign={'left'}
+          >
+            {`${index + 1}. ${chapter.title ? chapter.title : '<<TITLE>>'}`}
+          </Typography>
+          <Typography 
+            sx={{ fontSize: '14px' }} //TODO from article style
+          >
+            {chapter.text ? parse(chapter.text.replace(/\n/g, '</br>')) : ' '}
+          </Typography>
+        </>
+      ))}
+
+      <Box width={'100%'} display={'flex'} flexDirection={'row'} gap={'8px'} marginTop={'20px'}>
         {
           props.tags && props.tags.length > 0 &&
           props.tags.map(tag => (
