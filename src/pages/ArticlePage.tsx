@@ -1,13 +1,23 @@
-import { debounce, Typography } from "@mui/material";
-import { Box, Grid, TextField } from "@mui/material";
-import Button from "@mui/material/Button";
-import { useCallback, useEffect, useState } from "react"
-import { MainLayout } from "../components/common/MainLayout";
+import { debounce } from "@mui/material"
+import { Box, Grid } from "@mui/material"
+import Button from "@mui/material/Button"
+import { useState } from "react"
+import { MainLayout } from "../components/common/MainLayout"
 import { Form, Formik } from 'formik'
-import { Inputs } from "../components/ArticlePage/Inputs";
-import { Preview } from "../components/ArticlePage/Preview";
-import { Headlines } from "../components/ArticlePage/Headlines";
-import { CategoryDto, TagDto } from "../types";
+import { Inputs } from "../components/ArticlePage/Inputs"
+import { Preview } from "../components/ArticlePage/Preview"
+import { Headlines } from "../components/ArticlePage/Headlines"
+import { CategoryDto } from "../types"
+import { useSearchParams } from 'react-router-dom'
+import useGetArticle from '../hooks/useGetArticle'
+import LoadingPage from "./LoadingPage"
+import useAddArticle from '../hooks/useAddArticle'
+import useDeleteArticle from "../hooks/useDeleteArticle"
+import useSaveArticle from '../hooks/useSaveArticle'
+import useSaveAndFrowardArticleToRedaction from '../hooks/useSaveAndForwardArticleToRedaction'
+import { ArticleDto, PartialArticleDto } from "../hooks/types"
+import useGetTags from '../hooks/useGetTags'
+import useGetCategories from "../hooks/useGetCategories"
 
 export type ChapterDto = {
   title: string
@@ -23,6 +33,17 @@ type FormData = {
 }
 
 export const ArticlePage = (props: { articleId?: number }) => {
+  const [params, _] = useSearchParams()
+
+  const articleId = params.get('id') ? Number.parseInt(params.get('id')!) : null
+  
+  const tags = useGetTags()
+  const categories = useGetCategories()
+  const getArticle = useGetArticle({ enabled: articleId != null, id: articleId! })
+  const addArticle = useAddArticle()
+  const deleteArticle = useDeleteArticle()
+  const saveArticle = useSaveArticle()
+  const saveAndForwardArticleToRedaction = useSaveAndFrowardArticleToRedaction()
 
   const [previewTitle, setPreviewTitle] = useState('')
   const [previewText, setPreviewText] = useState('')
@@ -35,6 +56,20 @@ export const ArticlePage = (props: { articleId?: number }) => {
   const handleChaptersChange = debounce((chapters: ChapterDto[]) => setPreviewChapters(chapters), 100)
   const handleTagsChange = debounce((tags: string[]) => setPreviewTags(tags), 100)
   const handleCategoryChange = debounce((category: CategoryDto | null) => setPreviewCategory(category), 100)
+
+  if (getArticle.isLoading || categories.isLoading) {
+    return <LoadingPage/>
+  } else if (getArticle.isFetched) {
+    setPreviewTitle(getArticle.data?.title ?? '')
+    setPreviewText(getArticle.data?.text ?? '')
+    setPreviewTags(getArticle.data?.tags ?? [])
+    setPreviewChapters(getArticle.data?.chapters ?? [])
+    setPreviewCategory(
+      getArticle.data?.categoryId 
+        ? categories.data?.find(c => c.id === getArticle.data.categoryId)!
+        : null
+      )
+  }
 
   return (
     <MainLayout>
@@ -52,7 +87,8 @@ export const ArticlePage = (props: { articleId?: number }) => {
             chapters: [],
             categoryId: null
           }}
-          onSubmit={(data) => {console.log(data)}}
+          // validate={}
+          onSubmit={(data) => saveAndForwardArticleToRedaction.mutate(data as ArticleDto)}
         >
           {(formikProps) => (
             <Form style={{ width: '100%' }}>
@@ -74,6 +110,8 @@ export const ArticlePage = (props: { articleId?: number }) => {
                   onChaptersChange={() => handleChaptersChange(formikProps.values.chapters)}
                   onChapterDelete={(index) => handleChaptersChange(previewChapters.filter((_, i) => i !== index))}
                   chapters={formikProps.values.chapters}
+                  tagsQuery={tags}
+                  categories={categories.data ?? []}
                 />
 
                 <Grid
@@ -99,22 +137,51 @@ export const ArticlePage = (props: { articleId?: number }) => {
                 gap={'8px'}
               >
                 <Button
-                  type='submit'
                   // sx={{ height: '100px' }}
                   variant='contained'
                   sx={{ color: 'white' }}
+                  onClick={() => {
+                    const data: PartialArticleDto = {
+                      categoryId: previewCategory?.id ?? null,
+                      chapters: previewChapters,
+                      tags: previewTags,
+                      title: previewTitle,
+                      text: previewText
+                    }
+
+                    if (articleId != null) {
+                      saveArticle.mutate(data)
+                    } else {
+                      addArticle.mutate(data)
+                    }
+                  }}
                 >
-                  Zapisz
+                  { articleId != null ? 'Zapisz' : 'Dodaj' }
                 </Button>
 
-                <Button
-                  type='submit'
-                  // sx={{ height: '100px' }}
-                  variant='contained'
-                  sx={{ color: 'white' }}
-                >
-                  Przekaż do redakcji
-                </Button>
+                {
+                  articleId != null &&
+                  <Button
+                    type='submit'
+                    // sx={{ height: '100px' }}
+                    variant='contained'
+                    sx={{ color: 'white' }}
+                  >
+                    Przekaż do redakcji
+                  </Button>
+                }
+
+                {
+                  articleId != null &&
+                  <Button
+                    // sx={{ height: '100px' }}
+                    variant='contained'
+                    sx={{ color: 'lightRed' }}
+                    onClick={() => deleteArticle.mutate(articleId)}
+                  >
+                    Usuń
+                  </Button>
+                }
               </Box>
             </Form>
           )}

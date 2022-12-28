@@ -3,7 +3,7 @@ import { textFieldSx } from './styles'
 import { CategoryDto } from '../../types'
 import { ChapterDto } from '../../pages/ArticlePage';
 import { ChapterBlock } from './ChapterBlock';
-import { useCallback, useState } from 'react';
+import { UseQueryResult } from 'react-query';
 import { Field, FieldArray } from 'formik';
 
 type Props = {
@@ -14,10 +14,9 @@ type Props = {
   chapters: ChapterDto[]
   onChaptersChange: () => void
   onChapterDelete: (index: number) => void
+  tagsQuery: UseQueryResult<string[], unknown>
+  categories: CategoryDto[]
 }
-
-const dummyCategories = [{ id: 1, name: 'Polityka'}, { id: 2, name: 'Kulinaria'}, { id: 3, name: 'Nauka'}]
-const dummyTags = ['Pwr', 'piwo', 'prezydent']
 
 export const Inputs = (props: Props) => {
   return (
@@ -59,7 +58,7 @@ export const Inputs = (props: Props) => {
             renderInput={(params) => <TextField {...params} name='category' label='Kategoria'/>}
             getOptionLabel={(option) => option.name}
             onChange={(e, category) => props.onCategoryChange(category)}
-            options={dummyCategories} //TODO endpoint
+            options={props.categories}
           />
         </Grid>
         <Grid
@@ -73,8 +72,8 @@ export const Inputs = (props: Props) => {
             fullWidth
             renderInput={(params) => <TextField {...params} name='tags' label='Tagi'/>}
             onChange={(e, tags) => props.onTagsChange(tags)}
-            // onChange={(e, value) => props.onCategoryChange(value)}
-            options={dummyTags} //TODO endpoint
+            options={props.tagsQuery.data ?? []}
+            loading={props.tagsQuery.isLoading}
           />
         </Grid>
       </Grid>
