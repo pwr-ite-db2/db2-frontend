@@ -2,14 +2,14 @@ import { SxProps } from '@mui/material'
 
 export const textFieldSx: SxProps = {
   '.MuiInputBase-root': {
-    height: '300px',
-    maxHeight: '300px',
-    overflow: 'scroll'
+    height: '100px',
+    maxHeight: '100px',
+    //overflow: 'scroll'
   },
   '.MuiInputBase-input': {
-    height: '300px',
+    height: '100px',
     textAlign: 'start',
-    maxHeight: '300px',
-    //overflow: 'scroll'
+    maxHeight: '100px',
+    overflow: 'scroll'
   }
 }

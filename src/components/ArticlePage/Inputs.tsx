@@ -1,16 +1,22 @@
-import { Grid, TextField, Autocomplete } from '@mui/material'
+import { Grid, TextField, Autocomplete, Box, Button } from '@mui/material';
 import { textFieldSx } from './styles'
-import { CategoryDto, TagDto } from '../../types'
+import { CategoryDto } from '../../types'
+import { ChapterDto } from '../../pages/ArticlePage';
+import { ChapterBlock } from './ChapterBlock';
+import { UseQueryResult } from 'react-query';
+import { Field, FieldArray } from 'formik';
 
 type Props = {
-  onTitleChange: (title: string) => void
-  onTextChange: (text: string) => void
+  onTitleChange: (e: any) => void
+  onTextChange: (e: any) => void
   onCategoryChange: (category: CategoryDto | null) => void
   onTagsChange: (tags: string[]) => void
+  chapters: ChapterDto[]
+  onChaptersChange: () => void
+  onChapterDelete: (index: number) => void
+  tagsQuery: UseQueryResult<string[], unknown>
+  categories: CategoryDto[]
 }
-
-const dummyCategories = [{ id: 1, name: 'Polityka'}, { id: 2, name: 'Kulinaria'}, { id: 3, name: 'Nauka'}]
-const dummyTags = ['Pwr', 'piwo', 'prezydent']
 
 export const Inputs = (props: Props) => {
   return (
@@ -19,7 +25,7 @@ export const Inputs = (props: Props) => {
       direction={'column'}
       height={'100%'}
       gap={'16px'}
-      xs={5}
+      xs={4}
       justifyContent={'space-between'}
     >
       <Grid
@@ -31,13 +37,7 @@ export const Inputs = (props: Props) => {
           container item
           xs={5}
         >
-          <TextField
-            size="small"
-            name="title"
-            label="Tytuł"
-            onChange={(event) => props.onTitleChange(event.target.value)}
-            fullWidth
-          />
+          <Field name='title' as={TitleTextField} onKeyUp={props.onTitleChange}/>
         </Grid>
       </Grid>
 
@@ -58,7 +58,7 @@ export const Inputs = (props: Props) => {
             renderInput={(params) => <TextField {...params} name='category' label='Kategoria'/>}
             getOptionLabel={(option) => option.name}
             onChange={(e, category) => props.onCategoryChange(category)}
-            options={dummyCategories} //TODO endpoint
+            options={props.categories}
           />
         </Grid>
         <Grid
@@ -72,8 +72,8 @@ export const Inputs = (props: Props) => {
             fullWidth
             renderInput={(params) => <TextField {...params} name='tags' label='Tagi'/>}
             onChange={(e, tags) => props.onTagsChange(tags)}
-            // onChange={(e, value) => props.onCategoryChange(value)}
-            options={dummyTags} //TODO endpoint
+            options={props.tagsQuery.data ?? []}
+            loading={props.tagsQuery.isLoading}
           />
         </Grid>
       </Grid>
@@ -82,15 +82,62 @@ export const Inputs = (props: Props) => {
         container item
         xs={10}
       >
-        <TextField
-          multiline
-          fullWidth
-          sx={textFieldSx}
-          name='text'
-          label='Text'
-          onChange={(event) => props.onTextChange(event.target.value)}
+        <Field name='text' as={TextTextField} onKeyUp={props.onTextChange}/>
+
+        <FieldArray
+          name='chapters'
+          render={(arrayHelpers) => (
+            <Box
+              display={'flex'}
+              flexDirection={'column'}
+              sx={{ backgroundColor: 'lightgray' }}
+              marginTop={'20px'}
+              height={'260px'}
+              width={'100%'}
+              overflow={'scroll'}
+              gap={'14px'}
+            >
+              {props.chapters.map((chapter, index) => 
+                <ChapterBlock
+                  chapter={chapter}
+                  key={index}
+                  index={index}
+                  onDelete={() => { arrayHelpers.remove(index); props.onChapterDelete(index) }}
+                  onChange={props.onChaptersChange}
+                />
+              )}
+              <Button 
+                variant='contained' 
+                sx={{ 
+                  margin: '16px 40px 16px 40px',
+                  color: 'white' 
+                }}
+                onClick={() => { arrayHelpers.push({ title: '', text: '' }); props.onChaptersChange() }}
+              >
+                Dodaj rozdział
+              </Button>
+             </Box>
+          )}
         />
       </Grid>
     </Grid>
   )
 }
+
+const TextTextField = (props: any) => (
+  <TextField
+    {...props}
+    multiline
+    fullWidth
+    sx={textFieldSx}
+    label='Tekst'
+  />
+)
+const TitleTextField = (props: any) => (
+  <TextField
+    {...props}
+    size="small"
+    label="Tytuł"
+    fullWidth
+  />
+)
