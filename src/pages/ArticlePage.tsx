@@ -15,17 +15,13 @@ import useAddArticle from '../hooks/useAddArticle'
 import useDeleteArticle from "../hooks/useDeleteArticle"
 import useSaveArticle from '../hooks/useSaveArticle'
 import useSaveAndFrowardArticleToRedaction from '../hooks/useSaveAndForwardArticleToRedaction'
-import { ArticleDto, PartialArticleDto } from "../hooks/types"
-import useGetTags from '../hooks/useGetTags'
+import { ArticleDto, ChapterDto, DefaultArticleStyle, PartialArticleDto } from "../hooks/types"
 import useGetCategories from "../hooks/useGetCategories"
+import useGetTags from "../hooks/useGetTags"
 
-export type ChapterDto = {
-  title: string
-  text: string
-}
 
 type FormData = {
-  categoryId: number | null
+  category: CategoryDto | null
   title: string
   text: string
   tags: string[]
@@ -62,11 +58,11 @@ export const ArticlePage = (props: { articleId?: number }) => {
   } else if (getArticle.isFetched) {
     setPreviewTitle(getArticle.data?.title ?? '')
     setPreviewText(getArticle.data?.text ?? '')
-    setPreviewTags(getArticle.data?.tags ?? [])
+    setPreviewTags(getArticle.data?.tags?.map(t => t.name) ?? [])
     setPreviewChapters(getArticle.data?.chapters ?? [])
     setPreviewCategory(
-      getArticle.data?.categoryId 
-        ? categories.data?.find(c => c.id === getArticle.data.categoryId)!
+      getArticle.data?.category 
+        ? categories.data?.find(c => c.id === getArticle.data.category!.id)!
         : null
       )
   }
@@ -85,10 +81,17 @@ export const ArticlePage = (props: { articleId?: number }) => {
             text: '',
             tags: [],
             chapters: [],
-            categoryId: null
+            category: null
           }}
           // validate={}
-          onSubmit={(data) => saveAndForwardArticleToRedaction.mutate(data as ArticleDto)}
+          onSubmit={(data) => saveAndForwardArticleToRedaction.mutate({
+            formData: {
+              ...data,
+              tags: data.tags.map(t => ({ name: t })),
+              style: DefaultArticleStyle
+            } as ArticleDto,
+            type: 'submit'
+          })}
         >
           {(formikProps) => (
             <Form style={{ width: '100%' }}>
@@ -105,7 +108,7 @@ export const ArticlePage = (props: { articleId?: number }) => {
                 <Inputs
                   onTextChange={() => handleTextChange(formikProps.values.text)}
                   onTitleChange={() => handleTitleChange(formikProps.values.title)}
-                  onCategoryChange={(category) => { formikProps.values.categoryId = category?.id ?? null; handleCategoryChange(category)}}
+                  onCategoryChange={(category) => { formikProps.values.category = category; handleCategoryChange(category)}}
                   onTagsChange={(tags) => { formikProps.values.tags = tags; handleTagsChange(tags)}}
                   onChaptersChange={() => handleChaptersChange(formikProps.values.chapters)}
                   onChapterDelete={(index) => handleChaptersChange(previewChapters.filter((_, i) => i !== index))}
@@ -142,9 +145,10 @@ export const ArticlePage = (props: { articleId?: number }) => {
                   sx={{ color: 'white' }}
                   onClick={() => {
                     const data: PartialArticleDto = {
-                      categoryId: previewCategory?.id ?? null,
-                      chapters: previewChapters,
-                      tags: previewTags,
+                      style: DefaultArticleStyle,
+                      category: previewCategory,
+                      chapters: previewChapters.map((c, i) => ({ ...c, orderNum: i })),
+                      tags: previewTags.map(t => ({ name: t })),
                       title: previewTitle,
                       text: previewText
                     }

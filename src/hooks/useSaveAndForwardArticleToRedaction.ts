@@ -7,7 +7,7 @@ export const useSaveAndFrowardArticleToRedaction = () => {
   const client = useQueryClient()
   const navigate = useNavigate()
   
-  const mutation = useMutation(['redaction'], (formData: ArticleDto) => BackendApi.saveAndForwardArticleToRedaction(formData), {
+  const mutation = useMutation(['redaction'], (data: { formData: ArticleDto } & { type: 'submit' | 'publish' }) => BackendApi.saveAndForwardArticleToRedaction(data.formData, data.type), {
     onSuccess: () => {
       client.invalidateQueries(['getArticles'])
 

@@ -61,6 +61,10 @@ let MainTheme = createTheme({
     h2: {
       fontSize: '28px',
       fontWeight: '500'
+    },
+    h3: {
+      fontSize: '22px',
+      fontWeight: '400'
     }
   },
 })

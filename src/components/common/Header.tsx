@@ -1,16 +1,11 @@
 import { Box, Typography } from "@mui/material"
 import { useTheme } from '@mui/material'
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import { UserData } from '../../hooks/useLogin';
 
-type Props = {
-  name?: string
-  role?: string
-}
-
-export const Header = (props: Props) => {
+export const Header = () => {
   const theme = useTheme()
-  //TODO from login
-  const name = props.name ?? 'Autor'
+  const email = UserData.email
 
   return (
     <Box
@@ -22,14 +17,16 @@ export const Header = (props: Props) => {
       sx={{ backgroundColor: theme.palette.primary.main }}
       gap={'12px'}
     >
-      <AccountCircleIcon sx={{ color: 'white' }}/>
-      { name && 
-        <Typography 
-          fontSize={'20px'}
-          color={'white'}
-        >
-          {name}
-        </Typography> 
+      { UserData.authToken &&
+        <>
+          <AccountCircleIcon sx={{ color: 'white' }}/>
+          <Typography 
+            fontSize={'20px'}
+            color={'white'}
+          >
+            {UserData.role}
+          </Typography> 
+        </> 
       }
     </Box>
   )

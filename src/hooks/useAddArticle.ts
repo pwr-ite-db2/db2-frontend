@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from 'react-query'
 import { BackendApi } from './BackendApi'
-import { ArticleDto, PartialArticleDto } from './types';
+import { PartialArticleDto } from './types';
 import { useNavigate } from 'react-router-dom';
 
 export const useAddArticle = () => {

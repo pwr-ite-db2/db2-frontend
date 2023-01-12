@@ -1,10 +1,10 @@
 import { Grid, TextField, Autocomplete, Box, Button } from '@mui/material';
 import { textFieldSx } from './styles'
 import { CategoryDto } from '../../types'
-import { ChapterDto } from '../../pages/ArticlePage';
 import { ChapterBlock } from './ChapterBlock';
 import { UseQueryResult } from 'react-query';
 import { Field, FieldArray } from 'formik';
+import { ChapterDto } from '../../hooks/types';
 
 type Props = {
   onTitleChange: (e: any) => void
@@ -14,7 +14,7 @@ type Props = {
   chapters: ChapterDto[]
   onChaptersChange: () => void
   onChapterDelete: (index: number) => void
-  tagsQuery: UseQueryResult<string[], unknown>
+  tagsQuery: UseQueryResult<{ name: string }[], unknown>
   categories: CategoryDto[]
 }
 
@@ -72,7 +72,7 @@ export const Inputs = (props: Props) => {
             fullWidth
             renderInput={(params) => <TextField {...params} name='tags' label='Tagi'/>}
             onChange={(e, tags) => props.onTagsChange(tags)}
-            options={props.tagsQuery.data ?? []}
+            options={props.tagsQuery.data?.map(t => t.name) ?? []}
             loading={props.tagsQuery.isLoading}
           />
         </Grid>
@@ -116,7 +116,7 @@ export const Inputs = (props: Props) => {
               >
                 Dodaj rozdział
               </Button>
-             </Box>
+            </Box>
           )}
         />
       </Grid>
