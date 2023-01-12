@@ -5,6 +5,7 @@ declare module "@mui/material/styles" {
     category: React.CSSProperties;
     tag: React.CSSProperties;
     chapter: React.CSSProperties;
+    project: React.CSSProperties;
   }
 
   // allow configuration using `createTheme`
@@ -12,6 +13,7 @@ declare module "@mui/material/styles" {
     category?: React.CSSProperties;
     tag?: React.CSSProperties;
     chapter?: React.CSSProperties;
+    project?: React.CSSProperties;
   }
 }
 
@@ -21,6 +23,7 @@ declare module "@mui/material/Typography" {
     category: true;
     tag: true;
     chapter: true;
+    project: true;
   }
 }
 
@@ -31,20 +34,26 @@ let MainTheme = createTheme({
     },
   },
   typography: {
+    project: {
+      fontSize: '20px',
+      fontStyle: 'italic',
+      fontWeight: '700',
+      color: 'white',
+    },
     category: {
       fontSize: '14px',
       fontStyle: 'italic',
       backgroundColor: '#ffca81',
-      padding: '4px 8px 4px 8px',
+      padding: '4px 16px 4px 16px',
       borderRadius: '24px',
       width: 'fit-content',
       fontWeight: '700'
     },
     tag: {
-      fontSize: '10px',
+      fontSize: '14px',
       fontStyle: 'italic',
       backgroundColor: '#dbb8ff',
-      padding: '4px 8px 4px 8px',
+      padding: '4px 16px 4px 16px',
       borderRadius: '24px',
       width: 'fit-content',
       fontWeight: '700'

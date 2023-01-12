@@ -27,16 +27,18 @@ export const LoginPage = () => {
                 direction={'column'}
                 boxShadow={4}
                 borderRadius={'20px'}
-                padding={'32px 8px'}
+                padding={'32px 32px'}
                 gap={'32px'}
               >
                 <Typography variant='h3'>Zaloguj się</Typography>
                 <Field as={TextField} 
+                  fullWidth
                   name='email'
                   size='small'
                   label='login'
                 />
-                <Field as={TextField} 
+                <Field as={TextField}
+                  fullWidth
                   type='password'
                   name='password'
                   size='small'

@@ -1,6 +1,5 @@
 import './App.css';
-import { Box } from '@mui/material';
-import { ArticlePage } from './pages/ArticlePage';
+import { Toaster } from 'react-hot-toast'
 import { BrowserRouter } from 'react-router-dom';
 import { RoutingTable } from './pages/RoutingTable';
 import { QueryClient, QueryClientProvider } from 'react-query';
@@ -11,6 +10,7 @@ function App() {
   return (
     <BrowserRouter>
       <QueryClientProvider client={queryClient}>
+        <Toaster position='top-left'/>
         <RoutingTable/>
       </QueryClientProvider>
     </BrowserRouter>

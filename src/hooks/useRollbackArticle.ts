@@ -1,18 +1,17 @@
-import { useMutation, useQueryClient } from 'react-query'
+import { useMutation, useQueryClient, useQuery } from 'react-query';
 import { BackendApi } from './BackendApi'
-import { ArticleDto } from './types';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 
-export const useDeleteArticle = () => {
+export const useRollbackArticle = () => {
   const client = useQueryClient()
   const navigate = useNavigate()
   
-  const mutation = useMutation(['deleteArticle'], (id: number) => BackendApi.deleteArticle(id), {
+  const mutation = useMutation(['rollbackArticle'], (id: number) => BackendApi.rollbackArticle(id), {
     onSuccess: () => {
       client.invalidateQueries(['getArticles'])
 
-      toast.success('Szkic artykułu został usunięty')
+      toast.success('Szkic artykułu został wycofany do autora')
 
       navigate('/', { replace: true })
     }
@@ -21,4 +20,4 @@ export const useDeleteArticle = () => {
   return mutation
 }
 
-export default useDeleteArticle
+export default useRollbackArticle

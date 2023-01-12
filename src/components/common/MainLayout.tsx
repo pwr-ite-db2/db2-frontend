@@ -15,7 +15,7 @@ export const MainLayout = (props: { children?: JSX.Element | JSX.Element[] | nev
       <Box
         flexGrow={1}
         // width={'100%'}
-        padding={'48px 40px 0 40px'}
+        padding={'48px 40px 48px 40px'}
       >
         {props.children}
       </Box>

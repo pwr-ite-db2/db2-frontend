@@ -3,7 +3,7 @@ import { textFieldSx } from './styles'
 import { CategoryDto } from '../../types'
 import { ChapterBlock } from './ChapterBlock';
 import { UseQueryResult } from 'react-query';
-import { Field, FieldArray } from 'formik';
+import { Field, FieldArray, useFormik, useField } from 'formik';
 import { ChapterDto } from '../../hooks/types';
 
 type Props = {
@@ -84,12 +84,12 @@ export const Inputs = (props: Props) => {
             <Box
               display={'flex'}
               flexDirection={'column'}
-              sx={{ backgroundColor: 'lightgray' }}
+              sx={{ backgroundColor: 'lightgray', border: '1px solid' }}
               marginTop={'20px'}
-              height={'260px'}
               width={'100%'}
+              height={'442px'}
               overflow={'scroll'}
-              gap={'14px'}
+              gap={'24px'}
             >
               {props.chapters.map((chapter, index) => 
                 <ChapterBlock
@@ -103,7 +103,9 @@ export const Inputs = (props: Props) => {
               <Button 
                 variant='contained' 
                 sx={{ 
-                  margin: '16px 40px 16px 40px',
+                  alignSelf: 'center',
+                  width: '200px',
+                  margin: '16px',
                   color: 'white',
                   textTransform: 'none',
                   fontWeight: '700'
@@ -120,20 +122,31 @@ export const Inputs = (props: Props) => {
   )
 }
 
-const TextTextField = (props: any) => (
-  <TextField
-    {...props}
-    multiline
-    fullWidth
-    sx={textFieldSx}
-    label='Tekst'
-  />
-)
-const TitleTextField = (props: any) => (
-  <TextField
-    {...props}
-    size="small"
-    label="Tytuł"
-    fullWidth
-  />
-)
+const TextTextField = (props: any) => {
+  const [input, meta, helpers] = useField(props)
+  
+  return (
+    <TextField
+      error={meta.error}
+      {...props}
+      multiline
+      fullWidth
+      sx={textFieldSx}
+      label={meta.error ?? 'Tekst'}
+    />
+  )
+}
+
+const TitleTextField = (props: any) => {
+  const [input, meta, helpers] = useField(props)
+
+  return (
+    <TextField
+      error={meta.error}
+      {...props}
+      size="small"
+      label={meta.error ?? 'Tytuł'}
+      fullWidth
+    />
+  )
+}

@@ -18,8 +18,8 @@ export namespace BackendApi {
     return axiosInstance.post(`/auth/login`, credentials)
   } 
 
-  export function getArticle(id: number): Promise<PartialArticleDto & { id: number }> {
-    return axiosInstance.get(`/articles/${id}`, {
+  export function getArticle(id: number, forRedacting: boolean): Promise<PartialArticleDto & { id: number }> {
+    return axiosInstance.get(`/articles/${id}${forRedacting ? '/edit' : ''}`, {
       headers: {
         'Authorization': `Bearer ${getUser()?.token}`
       }
@@ -51,7 +51,6 @@ export namespace BackendApi {
   }
 
   export function addArticle(formData: PartialArticleDto): Promise<{ id: number }> {
-    // return axiosInstance.post('/articles', formData)
     return axiosInstance.put('/articles', formData, {
       headers: {
         'Authorization': `Bearer ${getUser()?.token}`
@@ -61,6 +60,14 @@ export namespace BackendApi {
   
   export function saveArticle(formData: PartialArticleDto): Promise<void> {
     return axiosInstance.put('/articles', formData, {
+      headers: {
+        'Authorization': `Bearer ${getUser()?.token}`
+      }
+    })
+  }
+  
+  export function rollbackArticle(id: number): Promise<void> {
+    return axiosInstance.get(`/articles/${id}/rollback`, {
       headers: {
         'Authorization': `Bearer ${getUser()?.token}`
       }

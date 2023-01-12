@@ -49,23 +49,45 @@ export const ChapterBlock = (props: Props) => {
   )
 }
 
-const SubitleTextField = (props: any) => (
-  <TextField
-    {...props}
-    size="small"
-    label={`Tytuł`}
-    sx={{ background: 'white', '.MuiInputBase-input': { fontSize: '14px'} }}
-    fullWidth
-  />
-)
+const SubitleTextField = (props: any) => {
+  const [input, meta, helpers] = useField(props)
 
-const TextTextField = (props: any) => (
-  <TextField
-    {...props}
-    multiline
-    fullWidth
-    sx={{ ...textFieldSx, backgroundColor: 'white' }}
-    //name={`chapters[${props.index}].text`}
-    label={`Tekst`}
-  />
+  return (
+    <TextField
+      error={meta.error}
+      {...props}
+      size="small"
+      label={meta.error ?? `Tytuł`}
+      onKeyUp={() => {
+        if (input.value) {
+          helpers.setError(undefined)
+        }
+        props.onKeyUp()
+      }}
+      sx={{ background: 'white', '.MuiInputBase-input': { fontSize: '14px'} }}
+      fullWidth
+    />
 )
+}
+
+const TextTextField = (props: any) => {
+  const [input, meta, helpers] = useField(props)
+
+  return (
+    <TextField
+      error={meta.error}
+      {...props}
+      multiline
+      fullWidth
+      onKeyUp={() => {
+        if (input.value) {
+          helpers.setError(undefined)
+        }
+        props.onKeyUp()
+      }}
+      sx={{ ...textFieldSx, backgroundColor: 'white' }}
+      //name={`chapters[${props.index}].text`}
+      label={`Tekst`}
+    />
+  )
+}

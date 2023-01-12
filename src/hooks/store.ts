@@ -1,4 +1,9 @@
-export type Roles = 'AUTOR' | 'REDAKTOR' | 'ADMIN' | 'CZYTELNIK'
+export enum Roles {
+  AUTOR = 'AUTOR',
+  REDAKTOR = 'REDAKTOR',
+  ADMIN = 'ADMIN',
+  CZYTELNIK = 'CZYTELNIK'
+}
 
 export type UserDto = { email: string, role: Roles, token: string }
 

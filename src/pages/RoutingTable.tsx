@@ -1,7 +1,7 @@
 import { Routes, Route, Outlet, Navigate } from 'react-router-dom'
 import { ArticlePage } from './ArticlePage'
 import { LoginPage } from './LoginPage';
-import { getUser, removeUser } from '../hooks/store';
+import { getUser } from '../hooks/store';
 
 export const RoutingTable = () => {
   const user = getUser()

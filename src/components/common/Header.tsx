@@ -1,4 +1,4 @@
-import { Box, Typography } from "@mui/material"
+import { Box, Divider, Typography } from "@mui/material"
 import { useTheme } from '@mui/material'
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { getUser } from "../../hooks/store";
@@ -27,25 +27,36 @@ export const Header = () => {
 
   return (
     <Box
-      height={'40px'}
+      height={'48px'}
       display={'flex'}
-      flexDirection={'row-reverse'}
+      flexDirection={'row'}
       alignItems={'center'}
+      justifyContent={'space-between'}
       padding={'0 20px 0 20px'}
       sx={{ backgroundColor: theme.palette.primary.main }}
       gap={'12px'}
     >
+      <Typography variant="project">Projekt Bazy Danych 2 - Portal informacyjny</Typography>
       { user &&
         <>
-          <IconButton onClick={handleClick}>
-            <AccountCircleIcon sx={{ color: 'white' }} />
-          </IconButton>
-          <Typography 
-            fontSize={'20px'}
-            color={'white'}
+          <Box
+            display={'flex'}
+            flexDirection={'row'}
+            alignItems={'center'}
           >
-            {user.role}
-          </Typography> 
+            <Typography 
+              fontSize={'20px'}
+              fontWeight={'700'}
+              color={'white'}
+              >
+              {user.role}
+            </Typography> 
+            
+            <IconButton onClick={handleClick}>
+              <AccountCircleIcon sx={{ color: 'white' }} />
+            </IconButton>
+          </Box>
+          
           <Popover
             open={open}
             anchorEl={anchorEl}
@@ -55,6 +66,28 @@ export const Header = () => {
               horizontal: 'left',
             }}
           >
+            <MenuItem
+              disableRipple
+              sx={{
+                ':hover': {
+                  cursor: 'auto',
+                  backgroundColor: 'white'
+                }
+              }}
+            >
+              {user.email}
+            </MenuItem>
+            <MenuItem
+              disableRipple
+              sx={{
+                ':hover': {
+                  cursor: 'auto',
+                  backgroundColor: 'white'
+                }
+              }}
+            >
+              <Divider sx={{width: '100%' }}/>
+            </MenuItem>
             <MenuItem onClick={logoutAction}>Wyloguj</MenuItem>
           </Popover>
         </> 

@@ -8,9 +8,6 @@ import { Inputs } from "../components/ArticlePage/Inputs"
 import { Preview } from "../components/ArticlePage/Preview"
 import { Headlines } from "../components/ArticlePage/Headlines"
 import { CategoryDto } from "../types"
-import { useSearchParams } from 'react-router-dom'
-import useGetArticle from '../hooks/useGetArticle'
-import LoadingPage from "./LoadingPage"
 import useAddArticle from '../hooks/useAddArticle'
 import useDeleteArticle from "../hooks/useDeleteArticle"
 import useSaveArticle from '../hooks/useSaveArticle'
@@ -18,7 +15,8 @@ import useSaveAndFrowardArticleToRedaction from '../hooks/useSaveAndForwardArtic
 import { ArticleDto, ChapterDto, DefaultArticleStyle, PartialArticleDto } from "../hooks/types"
 import useGetCategories from "../hooks/useGetCategories"
 import useGetTags from "../hooks/useGetTags"
-
+import { publishArticleValidation } from '../valdiations/publishArticle'
+import useRollbackArticle from '../hooks/useRollbackArticle';
 
 type FormData = {
   category: CategoryDto | null
@@ -28,13 +26,19 @@ type FormData = {
   chapters: ChapterDto[]
 }
 
-export const ArticlePageView = (props: { article?: PartialArticleDto & { id : number } }) => {
+type Props = {
+  isRedactor: boolean
+  article?: PartialArticleDto & { id: number }
+}
+
+export const ArticlePageView = (props: Props) => {
   const tags = useGetTags()
   const categories = useGetCategories()
   const addArticle = useAddArticle()
   const deleteArticle = useDeleteArticle()
   const saveArticle = useSaveArticle()
   const saveAndForwardArticleToRedaction = useSaveAndFrowardArticleToRedaction()
+  const rollbackArticle = useRollbackArticle()
 
   const [previewTitle, setPreviewTitle] = useState(props.article?.title ?? '')
   const [previewText, setPreviewText] = useState(props.article?.text ?? '')
@@ -55,7 +59,6 @@ export const ArticlePageView = (props: { article?: PartialArticleDto & { id : nu
         flexDirection={'column'}
         gap={'16px'}
       >
-
         <Formik<FormData>
           initialValues={props.article ? {
             title: props.article.title,
@@ -70,7 +73,6 @@ export const ArticlePageView = (props: { article?: PartialArticleDto & { id : nu
             chapters: [],
             category: null
           }}
-          // validate={}
           onSubmit={(data) => saveAndForwardArticleToRedaction.mutate({
             formData: {
               ...data,
@@ -78,8 +80,11 @@ export const ArticlePageView = (props: { article?: PartialArticleDto & { id : nu
               tags: data.tags.map(t => ({ name: t })),
               style: DefaultArticleStyle
             } as ArticleDto & { id: number },
-            type: 'submit'
+            type: props.isRedactor ? 'publish' : 'submit'
           })}
+          validationSchema={props.isRedactor ? publishArticleValidation : undefined}
+          validateOnChange={false}
+          validateOnBlur={false}
         >
           {(formikProps) => (
             <Form style={{ width: '100%' }}>
@@ -91,12 +96,28 @@ export const ArticlePageView = (props: { article?: PartialArticleDto & { id : nu
                 justifyContent={'space-between'}
                 paddingRight={'14px'}
               >
-                <Headlines edit={Boolean(props.article)} />
+                <Headlines edit={Boolean(props.article)} isRedacting={props.isRedactor}/>
         
                 <Inputs
-                  onTextChange={() => handleTextChange(formikProps.values.text)}
-                  onTitleChange={() => handleTitleChange(formikProps.values.title)}
-                  onCategoryChange={(category) => { formikProps.values.category = category; handleCategoryChange(category)}}
+                  onTextChange={() => {
+                    if (formikProps.values.text) {
+                      formikProps.errors.text =  undefined
+                    }
+                    handleTextChange(formikProps.values.text)
+                  }}
+                  onTitleChange={() => {
+                    if (formikProps.values.title) {
+                      formikProps.errors.title =  undefined
+                    }
+                    handleTitleChange(formikProps.values.title)
+                  }}
+                  onCategoryChange={(category) => { 
+                    formikProps.values.category = category
+                    if (category) {
+                      formikProps.errors.category = undefined
+                    }
+                    handleCategoryChange(category)
+                  }}
                   onTagsChange={(tags) => { formikProps.values.tags = tags; handleTagsChange(tags)}}
                   onChaptersChange={() => handleChaptersChange(formikProps.values.chapters)}
                   onChapterDelete={(index) => handleChaptersChange(previewChapters.filter((_, i) => i !== index))}
@@ -126,6 +147,7 @@ export const ArticlePageView = (props: { article?: PartialArticleDto & { id : nu
                 width={'100%'}
                 display={'flex'}
                 flexDirection={'row'}
+                marginTop={'32px'}
                 gap={'8px'}
               >
                 <Button
@@ -153,7 +175,7 @@ export const ArticlePageView = (props: { article?: PartialArticleDto & { id : nu
                     }
                   }}
                 >
-                  { props.article ? 'Zapisz' : 'Dodaj' }
+                  { props.article ? 'Zapisz' : 'Utwórz szkic artykułu' }
                 </Button>
 
                 {
@@ -167,7 +189,24 @@ export const ArticlePageView = (props: { article?: PartialArticleDto & { id : nu
                       fontWeight: '700',
                     }}
                   >
-                    Przekaż do redakcji
+                    {props.isRedactor ? 'Opublikuj' : 'Przekaż do redakcji'}
+                  </Button>
+                }
+
+                {
+                  props.article && props.isRedactor &&
+                  <Button
+                    // sx={{ height: '100px' }}
+                    variant='contained'
+                    sx={{ 
+                      color: 'white',
+                      textTransform: 'none',
+                      fontWeight: '700',
+                      backgroundColor: 'darkorange'
+                    }}
+                    onClick={() => rollbackArticle.mutate(props.article!.id)}
+                  >
+                    Wycofaj do autora
                   </Button>
                 }
 

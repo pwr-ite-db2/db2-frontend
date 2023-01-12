@@ -1,6 +1,6 @@
 import { Grid, Typography } from '@mui/material';
 
-export const Headlines = (props: { edit: boolean }) => {
+export const Headlines = (props: { edit: boolean, isRedacting: boolean }) => {
   return (
     <Grid
       container item
@@ -14,7 +14,9 @@ export const Headlines = (props: { edit: boolean }) => {
         direction={'row'}
       >
         <Typography variant='h2'>
-          { props.edit ? 'Edytowanie artykułu' : 'Dodawanie artykułu'}
+          { props.edit 
+            ? props.isRedacting ? 'Redagowanie artykułu' :'Edytowanie artykułu' 
+            : 'Dodawanie artykułu'}
         </Typography>
       </Grid>
 

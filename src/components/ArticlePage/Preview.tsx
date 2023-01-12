@@ -14,15 +14,14 @@ type Props = {
 export const Preview = (props: Props) => {
   return (
     <Box
-      height={'70vh'}
+      height={'68vh'}
       display={'flex'}
       flexDirection={'column'}
-      padding={'8px 16px 8px 16px'}
+      padding={'16px 32px 16px 32px'}
       overflow={'scroll'}
-      width={'100%'}
+      width={'95%'}
+      border={'1px solid'}
       sx={{
-        borderWidth: 2,
-        borderColor: 'red',
         backgroundColor: '#f0f0f0',
         overflowWrap: 'break-word'
       }}
@@ -37,6 +36,8 @@ export const Preview = (props: Props) => {
         {props.title ? props.title : '<<TITLE>>'}
       </Typography>
       <Typography
+        marginTop={'16px'}
+        marginBottom={'32px'}
         width={'100%'}
         textAlign={'center'}
         sx={{ fontSize: '16px' }} //TODO from article style
