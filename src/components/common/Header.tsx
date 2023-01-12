@@ -1,11 +1,29 @@
 import { Box, Typography } from "@mui/material"
 import { useTheme } from '@mui/material'
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-import { UserData } from '../../hooks/useLogin';
+import { getUser } from "../../hooks/store";
+import Popover from "@mui/material/Popover/Popover";
+import { useState } from 'react';
+import IconButton from '@mui/material/IconButton';
+import MenuItem from "@mui/material/MenuItem";
+import Button from '@mui/material/Button';
+import logoutAction from "../../hooks/useLogout";
 
 export const Header = () => {
   const theme = useTheme()
-  const email = UserData.email
+  const user = getUser()
+
+  const [open, setOpen] = useState(false)
+  const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+    setOpen(true)
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+    setOpen(false)
+  };
+
 
   return (
     <Box
@@ -17,15 +35,28 @@ export const Header = () => {
       sx={{ backgroundColor: theme.palette.primary.main }}
       gap={'12px'}
     >
-      { UserData.authToken &&
+      { user &&
         <>
-          <AccountCircleIcon sx={{ color: 'white' }}/>
+          <IconButton onClick={handleClick}>
+            <AccountCircleIcon sx={{ color: 'white' }} />
+          </IconButton>
           <Typography 
             fontSize={'20px'}
             color={'white'}
           >
-            {UserData.role}
+            {user.role}
           </Typography> 
+          <Popover
+            open={open}
+            anchorEl={anchorEl}
+            onClose={handleClose}
+            anchorOrigin={{
+              vertical: 'bottom',
+              horizontal: 'left',
+            }}
+          >
+            <MenuItem onClick={logoutAction}>Wyloguj</MenuItem>
+          </Popover>
         </> 
       }
     </Box>

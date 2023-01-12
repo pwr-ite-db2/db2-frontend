@@ -2,7 +2,7 @@ import axios from 'axios'
 import axiosRetry from 'axios-retry'
 import { ArticleDto, PartialArticleDto, CredentialsDto, TokenDto } from './types';
 import { CategoryDto } from '../types';
-import { UserData, User } from './useLogin';
+import { getUser } from './store';
 
 
 const axiosInstance = axios.create({
@@ -17,7 +17,7 @@ export namespace BackendApi {
   export function login(credentials: CredentialsDto): Promise<TokenDto> {
     return axiosInstance.post(`/auth/login`, credentials, {
       headers: {
-        'Authorization': UserData.authToken
+        'Authorization': `Bearer ${getUser()?.token}`
       }
     })
   } 
@@ -25,7 +25,7 @@ export namespace BackendApi {
   export function getArticle(id: number): Promise<PartialArticleDto> {
     return axiosInstance.get(`/articles/${id}`, {
       headers: {
-        'Authorization': UserData.authToken
+        'Authorization': `Bearer ${getUser()?.token}`
       }
     })
   }
@@ -33,7 +33,7 @@ export namespace BackendApi {
   export function getCategories(): Promise<CategoryDto[]> {
     return axiosInstance.get('/categories', {
       headers: {
-        'Authorization': UserData.authToken
+        'Authorization': `Bearer ${getUser()?.token}`
       }
     })
   }
@@ -41,7 +41,7 @@ export namespace BackendApi {
   export function getTags(): Promise<{ name: string }[]> {
     return axiosInstance.get('/tags', {
       headers: {
-        'Authorization': UserData.authToken
+        'Authorization': `Bearer ${getUser()?.token}`
       }
     })
   }
@@ -49,7 +49,7 @@ export namespace BackendApi {
   export function deleteArticle(id: number): Promise<void> {
     return axiosInstance.delete(`/articles/${id}`, {
       headers: {
-        'Authorization': UserData.authToken
+        'Authorization': `Bearer ${getUser()?.token}`
       }
     })
   }
@@ -58,7 +58,7 @@ export namespace BackendApi {
     // return axiosInstance.post('/articles', formData)
     return axiosInstance.put('/articles', formData, {
       headers: {
-        'Authorization': UserData.authToken
+        'Authorization': `Bearer ${getUser()?.token}`
       }
     })
   }
@@ -66,7 +66,7 @@ export namespace BackendApi {
   export function saveArticle(formData: PartialArticleDto): Promise<void> {
     return axiosInstance.put('/articles', formData, {
       headers: {
-        'Authorization': UserData.authToken
+        'Authorization': `Bearer ${getUser()?.token}`
       }
     })
   }
@@ -74,7 +74,7 @@ export namespace BackendApi {
   export function saveAndForwardArticleToRedaction(formData: ArticleDto, type: 'submit' | 'publish'): Promise<void> {
     return axiosInstance.put(`/articles/${type}`, formData, {
       headers: {
-        'Authorization': UserData.authToken
+        'Authorization': `Bearer ${getUser()?.token}`
       }
     })
   }

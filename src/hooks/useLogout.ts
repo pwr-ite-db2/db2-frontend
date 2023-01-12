@@ -1,14 +1,9 @@
 import { useNavigate } from 'react-router-dom';
-import { UserData } from './useLogin';
+import { removeUser } from './store';
 
-
-export const useLogout = () => {
-  const navigate = useNavigate()
-  
-  UserData.authToken = null
-  UserData.email = null
-
-  navigate('/login')
+export const logoutAction = () => {
+  removeUser()
+  window.location.reload()
 }
 
-export default useLogout
+export default logoutAction

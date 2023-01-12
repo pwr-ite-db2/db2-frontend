@@ -56,15 +56,15 @@ export const ArticlePage = (props: { articleId?: number }) => {
   if (getArticle.isLoading || categories.isLoading) {
     return <LoadingPage/>
   } else if (getArticle.isFetched) {
-    setPreviewTitle(getArticle.data?.title ?? '')
-    setPreviewText(getArticle.data?.text ?? '')
-    setPreviewTags(getArticle.data?.tags?.map(t => t.name) ?? [])
-    setPreviewChapters(getArticle.data?.chapters ?? [])
-    setPreviewCategory(
-      getArticle.data?.category 
-        ? categories.data?.find(c => c.id === getArticle.data.category!.id)!
-        : null
-      )
+    // setPreviewTitle(getArticle.data?.title ?? '')
+    // setPreviewText(getArticle.data?.text ?? '')
+    // setPreviewTags(getArticle.data?.tags?.map(t => t.name) ?? [])
+    // setPreviewChapters(getArticle.data?.chapters ?? [])
+    // setPreviewCategory(
+    //   getArticle.data?.category 
+    //     ? categories.data?.find(c => c.id === getArticle.data.category!.id)!
+    //     : null
+    //   )
   }
 
   return (
@@ -87,9 +87,10 @@ export const ArticlePage = (props: { articleId?: number }) => {
           onSubmit={(data) => saveAndForwardArticleToRedaction.mutate({
             formData: {
               ...data,
+              id: articleId!,
               tags: data.tags.map(t => ({ name: t })),
               style: DefaultArticleStyle
-            } as ArticleDto,
+            } as ArticleDto & { id: number },
             type: 'submit'
           })}
         >
@@ -154,7 +155,7 @@ export const ArticlePage = (props: { articleId?: number }) => {
                     }
 
                     if (articleId != null) {
-                      saveArticle.mutate(data)
+                      saveArticle.mutate({ ...data, id: articleId })
                     } else {
                       addArticle.mutate(data)
                     }

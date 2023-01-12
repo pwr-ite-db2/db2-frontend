@@ -4,7 +4,7 @@ import { ArticleDto, PartialArticleDto } from './types';
 import { useNavigate } from 'react-router-dom';
 
 export const useSaveArticle = () => {
-  const mutation = useMutation(['saveArticle'], (formData: PartialArticleDto) => BackendApi.saveArticle(formData))
+  const mutation = useMutation(['saveArticle'], (formData: PartialArticleDto & { id: number }) => BackendApi.saveArticle(formData))
 
   return mutation
 }
