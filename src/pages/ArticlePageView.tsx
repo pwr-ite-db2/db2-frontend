@@ -17,6 +17,8 @@ import useGetCategories from "../hooks/useGetCategories"
 import useGetTags from "../hooks/useGetTags"
 import { publishArticleValidation } from '../valdiations/publishArticle'
 import useRollbackArticle from '../hooks/useRollbackArticle';
+import { LoadingButton } from '@mui/lab';
+import LoadingPage from "./LoadingPage"
 
 type FormData = {
   category: CategoryDto | null
@@ -29,11 +31,11 @@ type FormData = {
 type Props = {
   isRedactor: boolean
   article?: PartialArticleDto & { id: number }
+  categories: CategoryDto[]
+  tags: string[]
 }
 
 export const ArticlePageView = (props: Props) => {
-  const tags = useGetTags()
-  const categories = useGetCategories()
   const addArticle = useAddArticle()
   const deleteArticle = useDeleteArticle()
   const saveArticle = useSaveArticle()
@@ -42,7 +44,7 @@ export const ArticlePageView = (props: Props) => {
 
   const [previewTitle, setPreviewTitle] = useState(props.article?.title ?? '')
   const [previewText, setPreviewText] = useState(props.article?.text ?? '')
-  const [previewCategory, setPreviewCategory] = useState<CategoryDto | null>(props.article?.category ?? null)
+  const [previewCategory, setPreviewCategory] = useState<CategoryDto | null>(props.article?.category ?? props.categories[0])
   const [previewTags, setPreviewTags] = useState<string[]>(props.article?.tags.map(t => t.name) ?? [])
   const [previewChapters, setPreviewChapters] = useState<ChapterDto[]>(props.article?.chapters ?? [])
 
@@ -111,7 +113,7 @@ export const ArticlePageView = (props: Props) => {
                     }
                     handleTitleChange(formikProps.values.title)
                   }}
-                  onCategoryChange={(category) => { 
+                  onCategoryChange={(category) => {
                     formikProps.values.category = category
                     if (category) {
                       formikProps.errors.category = undefined
@@ -122,8 +124,8 @@ export const ArticlePageView = (props: Props) => {
                   onChaptersChange={() => handleChaptersChange(formikProps.values.chapters)}
                   onChapterDelete={(index) => handleChaptersChange(previewChapters.filter((_, i) => i !== index))}
                   chapters={formikProps.values.chapters}
-                  tagsQuery={tags}
-                  categories={categories.data ?? []}
+                  tags={props.tags}
+                  categories={props.categories}
                   chosenCategory={previewCategory}
                 />
 
@@ -150,8 +152,8 @@ export const ArticlePageView = (props: Props) => {
                 marginTop={'32px'}
                 gap={'8px'}
               >
-                <Button
-                  // sx={{ height: '100px' }}
+                <LoadingButton
+                  loading={saveArticle.isLoading || addArticle.isLoading}
                   variant='contained'
                   sx={{ 
                     color: 'white',
@@ -176,11 +178,12 @@ export const ArticlePageView = (props: Props) => {
                   }}
                 >
                   { props.article ? 'Zapisz' : 'Utwórz szkic artykułu' }
-                </Button>
+                </LoadingButton>
 
                 {
                   props.article &&
-                  <Button
+                  <LoadingButton
+                    loading={saveAndForwardArticleToRedaction.isLoading}
                     type='submit'
                     variant='contained'
                     sx={{ 
@@ -190,13 +193,13 @@ export const ArticlePageView = (props: Props) => {
                     }}
                   >
                     {props.isRedactor ? 'Opublikuj' : 'Przekaż do redakcji'}
-                  </Button>
+                  </LoadingButton>
                 }
 
                 {
                   props.article && props.isRedactor &&
-                  <Button
-                    // sx={{ height: '100px' }}
+                  <LoadingButton
+                    loading={rollbackArticle.isLoading}
                     variant='contained'
                     sx={{ 
                       color: 'white',
@@ -207,13 +210,13 @@ export const ArticlePageView = (props: Props) => {
                     onClick={() => rollbackArticle.mutate(props.article!.id)}
                   >
                     Wycofaj do autora
-                  </Button>
+                  </LoadingButton>
                 }
 
                 {
                   props.article &&
-                  <Button
-                    // sx={{ height: '100px' }}
+                  <LoadingButton
+                    loading={deleteArticle.isLoading}
                     variant='contained'
                     sx={{ 
                       color: 'white',
@@ -224,7 +227,7 @@ export const ArticlePageView = (props: Props) => {
                     onClick={() => deleteArticle.mutate(props.article!.id)}
                   >
                     Usuń
-                  </Button>
+                  </LoadingButton>
                 }
               </Box>
             </Form>

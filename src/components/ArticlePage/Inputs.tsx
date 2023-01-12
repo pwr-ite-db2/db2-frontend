@@ -14,7 +14,7 @@ type Props = {
   chapters: ChapterDto[]
   onChaptersChange: () => void
   onChapterDelete: (index: number) => void
-  tagsQuery: UseQueryResult<{ name: string }[], unknown>
+  tags: string[]
   categories: CategoryDto[]
   chosenCategory: CategoryDto | null
 }
@@ -43,10 +43,11 @@ export const Inputs = (props: Props) => {
           xs={5}
         >
           <Field name='title' as={TitleTextField} onKeyUp={props.onTitleChange}/>
-          <Field as={Autocomplete}
+          <Field as={CategoryAutocompleteField}
+            name='category'
             size="small"
             fullWidth
-            renderInput={(params: any) => <TextField {...params} name='category' label='Kategoria'/>}
+            disableClearable
             getOptionLabel={(option: CategoryDto | undefined) => option?.name ?? ''}
             onChange={(e: any, category: CategoryDto) => props.onCategoryChange(category)}
             options={props.categories}
@@ -66,8 +67,7 @@ export const Inputs = (props: Props) => {
             fullWidth
             renderInput={(params: any) => <TextField {...params} name='tags' label='Tagi'/>}
             onChange={(e: any, tags: any) => props.onTagsChange(tags)}
-            options={props.tagsQuery.data?.map(t => t.name) ?? []}
-            loading={props.tagsQuery.isLoading}
+            options={props.tags}
           />
         </Grid>
       </Grid>
@@ -119,6 +119,19 @@ export const Inputs = (props: Props) => {
         />
       </Grid>
     </Grid>
+  )
+}
+
+const CategoryAutocompleteField = (props: any) => {
+  const [input, meta, helpers] = useField(props)
+
+  return (
+    <Autocomplete
+      {...props}
+      renderInput={(params: any) => 
+        <TextField {...params} name='category' label={meta.error ?? 'Kategoria'} error={meta.error}/>
+      }
+    />
   )
 }
 
