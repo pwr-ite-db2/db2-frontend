@@ -50,7 +50,7 @@ let MainTheme = createTheme({
       fontWeight: '700'
     },
     chapter: {
-      fontSize: '14px',
+      fontSize: '18px',
       fontStyle: 'bold',
       fontWeight: '700'
     },

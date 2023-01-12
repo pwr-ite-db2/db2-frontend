@@ -15,14 +15,10 @@ axiosRetry(axiosInstance, { retries: 3, retryDelay: (retryCount, error) => 100 }
 
 export namespace BackendApi {
   export function login(credentials: CredentialsDto): Promise<TokenDto> {
-    return axiosInstance.post(`/auth/login`, credentials, {
-      headers: {
-        'Authorization': `Bearer ${getUser()?.token}`
-      }
-    })
+    return axiosInstance.post(`/auth/login`, credentials)
   } 
 
-  export function getArticle(id: number): Promise<PartialArticleDto> {
+  export function getArticle(id: number): Promise<PartialArticleDto & { id: number }> {
     return axiosInstance.get(`/articles/${id}`, {
       headers: {
         'Authorization': `Bearer ${getUser()?.token}`

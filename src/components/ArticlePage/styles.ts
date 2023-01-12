@@ -7,9 +7,11 @@ export const textFieldSx: SxProps = {
     //overflow: 'scroll'
   },
   '.MuiInputBase-input': {
-    height: '100px',
+    //height: '100px',
     textAlign: 'start',
-    maxHeight: '100px',
-    overflow: 'scroll'
+    maxHeight: '80px',
+    overflow: 'scroll',
+    // /paddingTop: '20px',
+    fontSize: '14px'
   }
 }

@@ -34,7 +34,7 @@ export type PartialArticleDto = {
 
 export type ChapterDto = {
   orderNum: number
-  title: string
+  subtitle: string
   text: string
 }
 

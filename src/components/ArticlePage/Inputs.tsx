@@ -16,6 +16,7 @@ type Props = {
   onChapterDelete: (index: number) => void
   tagsQuery: UseQueryResult<{ name: string }[], unknown>
   categories: CategoryDto[]
+  chosenCategory: CategoryDto | null
 }
 
 export const Inputs = (props: Props) => {
@@ -31,47 +32,40 @@ export const Inputs = (props: Props) => {
       <Grid
         container item
         direction={'row'}
-        xs={1}
+        gap={'24px'}
+        justifyContent={'space-between'}
+        xs={2}
       >
         <Grid
           container item
+          direction={'column'}
+          gap={'16px'}
           xs={5}
         >
           <Field name='title' as={TitleTextField} onKeyUp={props.onTitleChange}/>
-        </Grid>
-      </Grid>
-
-      <Grid
-        container item
-        direction={'row'}
-        gap={'24px'}
-        justifyContent={'space-between'}
-        xs={1}
-      >
-        <Grid
-          container item
-          xs={5}
-        >
-          <Autocomplete<CategoryDto, false, true, false>
+          <Field as={Autocomplete}
             size="small"
             fullWidth
-            renderInput={(params) => <TextField {...params} name='category' label='Kategoria'/>}
-            getOptionLabel={(option) => option.name}
-            onChange={(e, category) => props.onCategoryChange(category)}
+            renderInput={(params: any) => <TextField {...params} name='category' label='Kategoria'/>}
+            getOptionLabel={(option: CategoryDto | undefined) => option?.name ?? ''}
+            onChange={(e: any, category: CategoryDto) => props.onCategoryChange(category)}
             options={props.categories}
+            value={props.chosenCategory}
           />
         </Grid>
         <Grid
           container item
-          xs={5}
+          direction={'column'}
+          xs={6.2}
         >
-          <Autocomplete<string, true, true, true>
+          <Field as={Autocomplete}
+            name='tags'
             size="small"
             multiple
             freeSolo
             fullWidth
-            renderInput={(params) => <TextField {...params} name='tags' label='Tagi'/>}
-            onChange={(e, tags) => props.onTagsChange(tags)}
+            renderInput={(params: any) => <TextField {...params} name='tags' label='Tagi'/>}
+            onChange={(e: any, tags: any) => props.onTagsChange(tags)}
             options={props.tagsQuery.data?.map(t => t.name) ?? []}
             loading={props.tagsQuery.isLoading}
           />
@@ -110,7 +104,9 @@ export const Inputs = (props: Props) => {
                 variant='contained' 
                 sx={{ 
                   margin: '16px 40px 16px 40px',
-                  color: 'white' 
+                  color: 'white',
+                  textTransform: 'none',
+                  fontWeight: '700'
                 }}
                 onClick={() => { arrayHelpers.push({ title: '', text: '' }); props.onChaptersChange() }}
               >

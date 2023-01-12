@@ -21,7 +21,7 @@ export const ChapterBlock = (props: Props) => {
       direction={'column'}
       width={'100%'}
       padding={'4px 10px 4px 10px'}
-      gap={'8px'}
+      gap={'16px'}
     >
       <Box 
         display={'flex'}
@@ -36,9 +36,9 @@ export const ChapterBlock = (props: Props) => {
       </Box>
 
       <Field
-        name={`chapters[${props.index}].title`}
+        name={`chapters[${props.index}].subtitle`}
         onKeyUp={props.onChange}
-        as={TitleTextField}
+        as={SubitleTextField}
       />
       <Field
         name={`chapters[${props.index}].text`}
@@ -49,12 +49,12 @@ export const ChapterBlock = (props: Props) => {
   )
 }
 
-const TitleTextField = (props: any) => (
+const SubitleTextField = (props: any) => (
   <TextField
     {...props}
     size="small"
     label={`Tytuł`}
-    sx={{ background: 'white' }}
+    sx={{ background: 'white', '.MuiInputBase-input': { fontSize: '14px'} }}
     fullWidth
   />
 )

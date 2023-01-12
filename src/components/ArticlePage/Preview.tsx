@@ -53,7 +53,7 @@ export const Preview = (props: Props) => {
             width={'100%'}
             textAlign={'left'}
           >
-            {`${index + 1}. ${chapter.title ? chapter.title : '<<TITLE>>'}`}
+            {`${index + 1}. ${chapter.subtitle ? chapter.subtitle : '<<TITLE>>'}`}
           </Typography>
           <Typography 
             sx={{ fontSize: '14px' }} //TODO from article style
