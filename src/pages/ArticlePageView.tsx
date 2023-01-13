@@ -19,6 +19,9 @@ import { publishArticleValidation } from '../valdiations/publishArticle'
 import useRollbackArticle from '../hooks/useRollbackArticle';
 import { LoadingButton } from '@mui/lab';
 import LoadingPage from "./LoadingPage"
+import { ConfirmDeleteDialog } from '../components/ArticlePage/ConfirmDeleteDialog';
+import { ConfirmRollbackDialog } from "../components/ArticlePage/ConfirmRollbackDialog"
+import { ConfirmForwardDialog } from "../components/ArticlePage/ConfirmForwardDialog"
 
 type FormData = {
   category: CategoryDto | null
@@ -37,10 +40,8 @@ type Props = {
 
 export const ArticlePageView = (props: Props) => {
   const addArticle = useAddArticle()
-  const deleteArticle = useDeleteArticle()
   const saveArticle = useSaveArticle()
   const saveAndForwardArticleToRedaction = useSaveAndFrowardArticleToRedaction()
-  const rollbackArticle = useRollbackArticle()
 
   const [previewTitle, setPreviewTitle] = useState(props.article?.title ?? '')
   const [previewText, setPreviewText] = useState(props.article?.text ?? '')
@@ -53,6 +54,10 @@ export const ArticlePageView = (props: Props) => {
   const handleChaptersChange = debounce((chapters: ChapterDto[]) => setPreviewChapters(chapters), 100)
   const handleTagsChange = debounce((tags: string[]) => setPreviewTags(tags), 100)
   const handleCategoryChange = debounce((category: CategoryDto | null) => setPreviewCategory(category), 100)
+
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
+  const [rollbackDialogOpen, setRollbackDialogOpen] = useState(false)
+  const [forwardDialogOpen, setForwardDialogOpen] = useState(false)
 
   return (
     <MainLayout>
@@ -73,7 +78,7 @@ export const ArticlePageView = (props: Props) => {
             text: '',
             tags: [],
             chapters: [],
-            category: null
+            category: props.categories[0]
           }}
           onSubmit={(data) => saveAndForwardArticleToRedaction.mutate({
             formData: {
@@ -182,52 +187,76 @@ export const ArticlePageView = (props: Props) => {
 
                 {
                   props.article &&
-                  <LoadingButton
-                    loading={saveAndForwardArticleToRedaction.isLoading}
-                    type='submit'
-                    variant='contained'
-                    sx={{ 
-                      color: 'white',
-                      textTransform: 'none',
-                      fontWeight: '700',
-                    }}
-                  >
-                    {props.isRedactor ? 'Opublikuj' : 'Przekaż do redakcji'}
-                  </LoadingButton>
+                  <>
+                    <LoadingButton
+                      ///loading={saveAndForwardArticleToRedaction.isLoading}
+                      //type='submit'
+                      onClick={() => setForwardDialogOpen(true)}
+                      variant='contained'
+                      sx={{ 
+                        color: 'white',
+                        textTransform: 'none',
+                        fontWeight: '700',
+                      }}
+                    >
+                      {props.isRedactor ? 'Opublikuj' : 'Przekaż do redakcji'}
+                    </LoadingButton>
+                    <ConfirmForwardDialog
+                      submit={() => formikProps.submitForm()}
+                      onClose={() => setForwardDialogOpen(false)} 
+                      open={forwardDialogOpen} 
+                      articleId={props.article.id} 
+                      articleTitle={props.article.title} 
+                      type={props.isRedactor ? 'publish' : 'submit'}
+                      isLoading={saveAndForwardArticleToRedaction.isLoading}
+                    />
+                  </>
                 }
 
                 {
-                  props.article && props.isRedactor &&
-                  <LoadingButton
-                    loading={rollbackArticle.isLoading}
-                    variant='contained'
-                    sx={{ 
-                      color: 'white',
-                      textTransform: 'none',
-                      fontWeight: '700',
-                      backgroundColor: 'darkorange'
-                    }}
-                    onClick={() => rollbackArticle.mutate(props.article!.id)}
-                  >
-                    Wycofaj do autora
-                  </LoadingButton>
+                  props.article && props.isRedactor && 
+                  <>
+                    <LoadingButton
+                      // loading={rollbackArticle.isLoading}
+                      variant='contained'
+                      sx={{ 
+                        color: 'white',
+                        textTransform: 'none',
+                        fontWeight: '700',
+                        backgroundColor: 'darkorange',
+                        ':hover': {
+                          backgroundColor: '#a66101',
+                        }
+                      }}
+                      onClick={() => setRollbackDialogOpen(true)}
+                    >
+                      Wycofaj do autora
+                    </LoadingButton>
+                    <ConfirmRollbackDialog onClose={() => setRollbackDialogOpen(false)} open={rollbackDialogOpen} articleId={props.article.id} articleTitle={props.article.title}/>
+                  </>
                 }
 
                 {
                   props.article &&
-                  <LoadingButton
-                    loading={deleteArticle.isLoading}
-                    variant='contained'
-                    sx={{ 
-                      color: 'white',
-                      textTransform: 'none',
-                      fontWeight: '700',
-                      backgroundColor: 'red'
-                    }}
-                    onClick={() => deleteArticle.mutate(props.article!.id)}
-                  >
-                    Usuń
-                  </LoadingButton>
+                  <>
+                    <LoadingButton
+                      //loading={deleteArticle.isLoading}
+                      variant='contained'
+                      sx={{ 
+                        color: 'white',
+                        textTransform: 'none',
+                        fontWeight: '700',
+                        backgroundColor: 'red',
+                        ':hover': {
+                          backgroundColor: 'darkred'
+                        }
+                      }}
+                      onClick={() => setDeleteDialogOpen(true)}
+                    >
+                      Usuń
+                    </LoadingButton>
+                    <ConfirmDeleteDialog onClose={() => setDeleteDialogOpen(false)} open={deleteDialogOpen} articleId={props.article.id} articleTitle={props.article.title}/>
+                  </>
                 }
               </Box>
             </Form>

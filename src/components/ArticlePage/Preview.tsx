@@ -1,6 +1,6 @@
 import { Box, Typography } from '@mui/material';
 import parse from 'react-html-parser'
-import { CategoryDto, TagDto } from '../../types';
+import { CategoryDto } from '../../types';
 import { ChapterDto } from '../../hooks/types';
 
 type Props = {

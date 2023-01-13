@@ -3,13 +3,21 @@ import axiosRetry from 'axios-retry'
 import { ArticleDto, PartialArticleDto, CredentialsDto, TokenDto } from './types';
 import { CategoryDto } from '../types';
 import { getUser } from './store';
+import logoutAction from './useLogout';
+import { toast } from 'react-hot-toast';
 
 
 const axiosInstance = axios.create({
   baseURL: 'http://localhost:8080',
 })
 
-axiosInstance.interceptors.response.use(({ data }) => data)
+axiosInstance.interceptors.response.use(
+  ({ data }) => data,
+  (error) => {
+    logoutAction('Coś poszło nie tak. Nastąpiło automatyczne wylogowanie')
+    throw error
+  }
+)
 
 axiosRetry(axiosInstance, { retries: 3, retryDelay: (retryCount, error) => 100 })
 

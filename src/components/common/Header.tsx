@@ -6,7 +6,6 @@ import Popover from "@mui/material/Popover/Popover";
 import { useState } from 'react';
 import IconButton from '@mui/material/IconButton';
 import MenuItem from "@mui/material/MenuItem";
-import Button from '@mui/material/Button';
 import logoutAction from "../../hooks/useLogout";
 
 export const Header = () => {
@@ -35,6 +34,7 @@ export const Header = () => {
       padding={'0 20px 0 20px'}
       sx={{ backgroundColor: theme.palette.primary.main }}
       gap={'12px'}
+      boxShadow={4}
     >
       <Typography variant="project">Projekt Bazy Danych 2 - Portal informacyjny</Typography>
       { user &&
@@ -88,7 +88,7 @@ export const Header = () => {
             >
               <Divider sx={{width: '100%' }}/>
             </MenuItem>
-            <MenuItem onClick={logoutAction}>Wyloguj</MenuItem>
+            <MenuItem onClick={() => logoutAction()}>Wyloguj</MenuItem>
           </Popover>
         </> 
       }

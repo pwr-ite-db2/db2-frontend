@@ -2,8 +2,7 @@ import { Grid, TextField, Autocomplete, Box, Button } from '@mui/material';
 import { textFieldSx } from './styles'
 import { CategoryDto } from '../../types'
 import { ChapterBlock } from './ChapterBlock';
-import { UseQueryResult } from 'react-query';
-import { Field, FieldArray, useFormik, useField } from 'formik';
+import { Field, FieldArray, useField } from 'formik';
 import { ChapterDto } from '../../hooks/types';
 
 type Props = {
@@ -57,7 +56,7 @@ export const Inputs = (props: Props) => {
         <Grid
           container item
           direction={'column'}
-          xs={6.2}
+          xs={6}
         >
           <Field as={Autocomplete}
             name='tags'
