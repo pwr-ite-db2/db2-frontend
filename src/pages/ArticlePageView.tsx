@@ -1,6 +1,5 @@
 import { debounce } from "@mui/material"
 import { Box, Grid } from "@mui/material"
-import Button from "@mui/material/Button"
 import { useState } from "react"
 import { MainLayout } from "../components/common/MainLayout"
 import { Form, Formik } from 'formik'
@@ -9,16 +8,11 @@ import { Preview } from "../components/ArticlePage/Preview"
 import { Headlines } from "../components/ArticlePage/Headlines"
 import { CategoryDto } from "../types"
 import useAddArticle from '../hooks/useAddArticle'
-import useDeleteArticle from "../hooks/useDeleteArticle"
 import useSaveArticle from '../hooks/useSaveArticle'
 import useSaveAndFrowardArticleToRedaction from '../hooks/useSaveAndForwardArticleToRedaction'
 import { ArticleDto, ChapterDto, DefaultArticleStyle, PartialArticleDto } from "../hooks/types"
-import useGetCategories from "../hooks/useGetCategories"
-import useGetTags from "../hooks/useGetTags"
 import { publishArticleValidation } from '../valdiations/publishArticle'
-import useRollbackArticle from '../hooks/useRollbackArticle';
 import { LoadingButton } from '@mui/lab';
-import LoadingPage from "./LoadingPage"
 import { ConfirmDeleteDialog } from '../components/ArticlePage/ConfirmDeleteDialog';
 import { ConfirmRollbackDialog } from "../components/ArticlePage/ConfirmRollbackDialog"
 import { ConfirmForwardDialog } from "../components/ArticlePage/ConfirmForwardDialog"
@@ -80,15 +74,21 @@ export const ArticlePageView = (props: Props) => {
             chapters: [],
             category: props.categories[0]
           }}
-          onSubmit={(data) => saveAndForwardArticleToRedaction.mutate({
+          onSubmit={(data) => {
+            
+            saveAndForwardArticleToRedaction.mutate({
             formData: {
-              ...data,
+              // ...data,
+              title: data.title,
+              text: data.text,
+              category: data.category,
+              chapters: data.chapters.map((c, i) => ({ orderNum: i + 1, text: c.text, subtitle: c.subtitle })),
               id: props.article!.id,
               tags: data.tags.map(t => ({ name: t })),
               style: DefaultArticleStyle
             } as ArticleDto & { id: number },
             type: props.isRedactor ? 'publish' : 'submit'
-          })}
+          })}}
           validationSchema={props.isRedactor ? publishArticleValidation : undefined}
           validateOnChange={false}
           validateOnBlur={false}

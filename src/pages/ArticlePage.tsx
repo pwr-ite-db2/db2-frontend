@@ -24,7 +24,7 @@ export const ArticlePage = () => {
       tags={tags.data!.map(t => t.name)}
       categories={categories.data!}
       isRedactor={isRedactor} 
-      article={getArticle.isFetched ? getArticle.data : undefined}
+      article={articleId != null && getArticle.isFetched ? getArticle.data : undefined}
     />
   )
 }
