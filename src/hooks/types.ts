@@ -24,6 +24,7 @@ export type ArticleDto = {
 }
 
 export type PartialArticleDto = {
+  id?: number
   title: string
   text: string
   chapters: ChapterDto[]

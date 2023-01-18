@@ -4,7 +4,6 @@ import { ArticleDto, PartialArticleDto, CredentialsDto, TokenDto } from './types
 import { CategoryDto } from '../types';
 import { getUser } from './store';
 import logoutAction from './useLogout';
-import { toast } from 'react-hot-toast';
 
 
 const axiosInstance = axios.create({
@@ -25,6 +24,14 @@ export namespace BackendApi {
   export function login(credentials: CredentialsDto): Promise<TokenDto> {
     return axiosInstance.post(`/auth/login`, credentials)
   } 
+
+  export function getArticleList(): Promise<PartialArticleDto[]> {
+    return axiosInstance.get('/articles', {
+      headers: {
+        'Authorization': `Bearer ${getUser()?.token}`
+      }
+    })
+  }
 
   export function getArticle(id: number, forRedacting: boolean): Promise<PartialArticleDto & { id: number }> {
     return axiosInstance.get(`/articles/${id}${forRedacting ? '/edit' : ''}`, {

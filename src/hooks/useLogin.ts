@@ -19,7 +19,7 @@ export const useLogin = () => {
           token: response.token
         })
 
-        window.location.replace('http://localhost:3000/articles/manage')
+        window.location.replace('http://localhost:3000/articles/list')
         
         // navigate(`/articles/manage`, { replace: true })
       }

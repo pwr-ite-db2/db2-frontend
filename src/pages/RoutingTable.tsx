@@ -1,5 +1,6 @@
 import { Routes, Route, Outlet, Navigate } from 'react-router-dom'
 import { ArticlePage } from './ArticlePage'
+import { ArticleList } from './ArticleList'
 import { LoginPage } from './LoginPage';
 import { getUser } from '../hooks/store';
 
@@ -16,10 +17,10 @@ export const RoutingTable = () => {
                 <Route path='login' element={<LoginPage/>}/>
               </>
             : <>
-                <Route index element={<Navigate to={'/articles/manage'} />} />
+                <Route index element={<Navigate to={'/articles/list'} />} />
                 <Route path='articles' element={<Outlet />}>
+                  <Route path='list' element={<ArticleList/>}/>
                   <Route path='manage' element={<ArticlePage/>}/>
-                  {/* <Route path='list' element={<ArticlePage/>}/> //TODO lista*/}
                 </Route>
               </> 
 

@@ -104,7 +104,6 @@ export const ArticlePageView = (props: Props) => {
                 paddingRight={'14px'}
               >
                 <Headlines edit={Boolean(props.article)} isRedacting={props.isRedactor}/>
-        
                 <Inputs
                   onTextChange={() => {
                     if (formikProps.values.text) {
