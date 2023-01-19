@@ -8,7 +8,7 @@ type Options = {
 }
 
 export const useGetArticle = (options: Options) => {
-  const query = useQuery(['getArticle'], () => BackendApi.getArticle(options.id, options.forRedacting), {
+  const query = useQuery(['getArticle'], () => BackendApi.getArticle(options.id, false), {
     enabled: options.enabled
   })
 
