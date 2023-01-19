@@ -39,7 +39,7 @@ export const ArticlePageView = (props: Props) => {
 
   const addArticle = useAddArticle()
   const saveArticle = useSaveArticle()
-  const saveAndForwardArticleToRedaction = useSaveAndFrowardArticleToRedaction()
+  const saveAndForwardArticleToRedaction = useSaveAndFrowardArticleToRedaction(props.isRedactor ? 'publish' : 'submit')
 
   const [previewTitle, setPreviewTitle] = useState(props.article?.title ?? '')
   const [previewText, setPreviewText] = useState(props.article?.text ?? '')
@@ -92,7 +92,6 @@ export const ArticlePageView = (props: Props) => {
             category: props.categories[0]
           }}
           onSubmit={(data) => {
-            
             saveAndForwardArticleToRedaction.mutate({
             formData: {
               // ...data,
@@ -103,14 +102,14 @@ export const ArticlePageView = (props: Props) => {
               id: props.article!.id,
               tags: data.tags.map(t => ({ name: t })),
               style: DefaultArticleStyle
-            } as ArticleDto & { id: number },
-            type: props.isRedactor ? 'publish' : 'submit'
+            } as ArticleDto & { id: number }
           })}}
           validationSchema={props.isRedactor ? publishArticleValidation : undefined}
           validateOnChange={false}
           validateOnBlur={false}
         >
           {(formikProps) => (
+            
             <Form style={{ width: '100%' }}>
               <Grid
                 container
@@ -137,7 +136,7 @@ export const ArticlePageView = (props: Props) => {
                   onCategoryChange={(category) => {
                     formikProps.values.category = category
                     if (category) {
-                      formikProps.errors.category = undefined
+                      formikProps.setFieldError('category', undefined)
                     }
                     handleCategoryChange(category)
                   }}

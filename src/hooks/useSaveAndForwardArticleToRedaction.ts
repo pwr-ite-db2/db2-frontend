@@ -4,15 +4,15 @@ import { ArticleDto } from './types';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 
-export const useSaveAndFrowardArticleToRedaction = () => {
+export const useSaveAndFrowardArticleToRedaction = (type: 'submit' | 'publish') => {
   const client = useQueryClient()
   const navigate = useNavigate()
   
-  const mutation = useMutation(['redaction'], (data: { formData: ArticleDto & { id: number } } & { type: 'submit' | 'publish' }) => BackendApi.saveAndForwardArticleToRedaction(data.formData, data.type), {
+  const mutation = useMutation(['redaction'], (data: { formData: ArticleDto & { id: number } }) => BackendApi.saveAndForwardArticleToRedaction(data.formData, type), {
     onSuccess: () => {
       client.invalidateQueries(['getArticles'])
 
-      toast.success('Szkic artykułu został przekazany do redaktora')
+      toast.success(`Szkic artykułu został ${type === 'submit' ? 'przekazany do redaktora' : 'opublikoway'}`)
 
       navigate('/', { replace: true })
     }

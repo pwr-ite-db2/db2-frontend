@@ -73,7 +73,6 @@ export const ArticleList = () => {
                     fontWeight: '700'
                   }}
                   onClick={() => {
-                    console.log(article.id)
                     navigate(`/articles/manage/?id=${article.id}`)
                   }}
                 >
