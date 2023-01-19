@@ -61,6 +61,7 @@
   },
   "devDependencies": {
     "@types/jsonwebtoken": "^9.0.0",
-    "@types/react-html-parser": "^2.0.2"
+    "@types/react-html-parser": "^2.0.2",
+    "@types/react-query": "^1.2.9"
   }
 }

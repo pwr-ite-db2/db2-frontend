@@ -16,6 +16,8 @@ import { LoadingButton } from '@mui/lab';
 import { ConfirmDeleteDialog } from '../components/ArticlePage/ConfirmDeleteDialog';
 import { ConfirmRollbackDialog } from "../components/ArticlePage/ConfirmRollbackDialog"
 import { ConfirmForwardDialog } from "../components/ArticlePage/ConfirmForwardDialog"
+import Button from "@mui/material/Button"
+import { useNavigate } from "react-router-dom"
 
 type FormData = {
   category: CategoryDto | null
@@ -33,6 +35,8 @@ type Props = {
 }
 
 export const ArticlePageView = (props: Props) => {
+  const navigate = useNavigate()
+
   const addArticle = useAddArticle()
   const saveArticle = useSaveArticle()
   const saveAndForwardArticleToRedaction = useSaveAndFrowardArticleToRedaction()
@@ -60,6 +64,19 @@ export const ArticlePageView = (props: Props) => {
         flexDirection={'column'}
         gap={'16px'}
       >
+        <Button 
+          sx={{ 
+            alignSelf: 'left', 
+            width: '180px', 
+            color: 'white',
+            fontWeight: '700',
+            textTransform: 'none'
+          }} 
+          variant="contained"
+          onClick={() => navigate('/')}
+        >
+          Wróć do listy
+        </Button>
         <Formik<FormData>
           initialValues={props.article ? {
             title: props.article.title,
@@ -104,7 +121,6 @@ export const ArticlePageView = (props: Props) => {
                 paddingRight={'14px'}
               >
                 <Headlines edit={Boolean(props.article)} isRedacting={props.isRedactor}/>
-        
                 <Inputs
                   onTextChange={() => {
                     if (formikProps.values.text) {
@@ -213,7 +229,7 @@ export const ArticlePageView = (props: Props) => {
                   </>
                 }
 
-                {
+                {/* {
                   props.article && props.isRedactor && 
                   <>
                     <LoadingButton
@@ -234,7 +250,7 @@ export const ArticlePageView = (props: Props) => {
                     </LoadingButton>
                     <ConfirmRollbackDialog onClose={() => setRollbackDialogOpen(false)} open={rollbackDialogOpen} articleId={props.article.id} articleTitle={props.article.title}/>
                   </>
-                }
+                } */}
 
                 {
                   props.article &&
