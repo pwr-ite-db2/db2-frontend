@@ -25,8 +25,8 @@ export namespace BackendApi {
     return axiosInstance.post(`/auth/login`, credentials)
   } 
 
-  export function getArticleList(): Promise<PartialArticleDto[]> {
-    return axiosInstance.get('/articles', {
+  export function getArticleList(isAuthor: boolean): Promise<PartialArticleDto[]> {
+    return axiosInstance.get(`/articles?${isAuthor ? `status=1` : 'status=2'}`, {
       headers: {
         'Authorization': `Bearer ${getUser()?.token}`
       }

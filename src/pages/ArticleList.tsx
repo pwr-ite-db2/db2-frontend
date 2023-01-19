@@ -7,10 +7,10 @@ import useGetArticleList from '../hooks/useGetArticles';
 import LoadingPage from "./LoadingPage";
 
 export const ArticleList = () => {
-  const articles = useGetArticleList()
   const navigate = useNavigate();
   const userRole = getUser()?.role
-
+  const articles = useGetArticleList(userRole === 'AUTOR')
+  
   if (articles.isLoading) {
     return <LoadingPage/>
   }
