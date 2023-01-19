@@ -123,13 +123,13 @@ export const ArticlePageView = (props: Props) => {
                 <Inputs
                   onTextChange={() => {
                     if (formikProps.values.text) {
-                      formikProps.errors.text =  undefined
+                      formikProps.setFieldError('text', undefined)
                     }
                     handleTextChange(formikProps.values.text)
                   }}
                   onTitleChange={() => {
                     if (formikProps.values.title) {
-                      formikProps.errors.title =  undefined
+                      formikProps.setFieldError('title', undefined)
                     }
                     handleTitleChange(formikProps.values.title)
                   }}
