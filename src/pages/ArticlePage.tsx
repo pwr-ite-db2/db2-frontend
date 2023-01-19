@@ -10,7 +10,7 @@ import useGetCategories from '../hooks/useGetCategories'
 export const ArticlePage = () => {
   const [params, _] = useSearchParams()
   const articleId = params.get('id') ? Number.parseInt(params.get('id')!) : null
-  const isRedactor = [Roles.REDAKTOR, Roles.AUTOR].includes(getUser()?.role!) 
+  const isRedactor = getUser()?.role === Roles.REDAKTOR || getUser()?.role === Roles.ADMIN
   const getArticle = useGetArticle({ enabled: articleId != null, id: articleId!, forRedacting: isRedactor})
   const tags = useGetTags()
   const categories = useGetCategories()
